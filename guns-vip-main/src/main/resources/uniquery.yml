@@ -1,0 +1,163 @@
+# select:下来数据来源配置
+#   selectName:下拉数据说明
+#   selectMapKey:查询条件中下拉列表Map的Key
+#   resultMapKey:查询结果列表中结果Map的Key，当该值为空时，默认何selectMapKey一样
+#   selectSourceType:下拉数据来源类型：0：枚举；1：字典表（暂时未实现）
+#   selectSource:枚举的类名，或者字典表id
+#   defaultValue:默认选中的值(功能未实现)
+# parentTable：通用查询主配置
+#   id:通用查询标识
+#   table:数据库表名
+#   tableAliasName：数据库表别名
+#   clazz：查询结果返回的实体类名，包含包名
+#   pk:数据库主键
+#   where:固定的where条件
+#   isCrossGroup:是否跨组；0：不跨组；1：跨组
+#   crossGroupColumn:跨组列
+#   defaultResult:默认显示查询结果；0：开始只显示查询条件；1：默认就显示查询结果
+#   toolbarWidth:操作列宽度
+#   toolbarMinWidth:操作列最小宽度
+#   orderby:排序条件
+# sonTable：关联子表配置
+#   index:关联子表排序
+#   table:关联子表名称
+#   aliasName：关联子表别名
+#   joinType:关联类型：left左关联、right右关联、inner内联
+#   joinCondition:关联条件
+# query:查询条件
+#   label：查询条件标签名
+#   id:页面元素id，name,也是提交请求的变量名
+#   column：数据库列名
+#   tableName：所属表的别名
+#   type：页面元素类型：1-输入框；2-日期；3-下拉框
+#   match:过滤数据匹配类型：equal-相等；like-模糊查询；date-日期范围；between-数值范围
+#   order：查询条件排序
+#   selectMapKey：数据下拉的数据Map对应的key
+#   security：显示权限，当多类人员登录时可以使用，某个条件在哪些类人的操作页面显示，暂时用不到
+#   cascadetype:级联类型：后续根据具体功能拓展，多级级联下拉
+#   defaultValue：默认值
+# result:结果列
+#   label：结果列标签
+#   column：查询列列名称
+#   tableName：数据表别名
+#   customizeColumn:自定义列，sql拼接的自定义字段，比如case when then，函数调用等
+#   aliasName：查询列别名，即实体类属性
+#   isshow：该列是否显示
+#   order：结果列显示次序
+#   security：哪类人群功能显示
+#   resultMapKey：查询结果数字转换Map对应的Key
+#   width:列宽
+#   minWidth：最小列宽
+#   fixed：固定列类型：left-左侧；right-右侧；居左必须把列放在最前面，即order最小；具有则把列放在最后面，即order最大
+#   sort:该列是否页内排序
+#   columnType：数据列数据类型，数据导出时，用于指定excel单元格的数据类型，例如double
+#   align:文本对齐方式：left-居左；right-居右；center-居中
+# operation:操作按钮
+#   label：操作按钮显示名称
+#   id：操作按钮页面元素的id
+#   name:操作按钮页面元素的name
+#   resultRef:按钮显示过滤列，对应result中的aliasName,实体类的属性名
+#   resultValue：按钮显示过滤对应值，目前只可以填写一个值
+#   target：页面跳转方式：_target-浏览器新标签；为空时，页面工作区内跳转
+#   href：按钮链接地址
+#   security：按钮哪端显示，暂时不用
+#   displayPosition：按钮显示位置：0-查询按钮后面；1-查询结果操作列内显示
+#   style：按钮样式，为layui按钮样式对应的class值，参见https://www.layui.com/doc/element/button.html，例如：layui-btn-danger红色警告样式
+#   icon：按钮图标，layui按钮图标对应的class值，参见https://www.layui.com/doc/element/icon.html，例如：layui-icon-delete删除图标
+#   paramList：按钮对应的参数列表
+#     name：变量名
+#     resultRef：变量值，对应结果列result中的aliasName,实体类的属性名
+# link:链接
+#   href：链接地址
+#   location：链接所在列，对应结果列result中的aliasName,实体类的属性名
+#   target：页面跳转方式：_target-浏览器新标签；为空时，页面工作区内跳转
+#   paramList：链接对应的参数列表，同按钮参数
+#     name：变量名
+#     resultRef：变量值，对应结果列result中的aliasName,实体类的属性名
+uniquery:
+  selectList:
+    [{selectName: 通用是否,selectMapKey: whether,resultMapKey: whether,selectSourceType: 0,selectSource: cn.stylefeng.guns.sys.core.constant.state.Whether,defaultValue: },
+    {selectName: 启用状态,selectMapKey: enableStatus,resultMapKey: enableStatus,selectSourceType: 0,selectSource: cn.stylefeng.guns.sys.core.constant.state.MenuStatus,defaultValue: }]
+  parentTableList:
+    [
+    {id: dictTypeManager,name: 字典管理,
+       table: sys_dict_type,
+       tableAliasName: sdt,
+       clazz: cn.stylefeng.guns.sys.modular.system.model.result.DictTypeResult,
+       pk: dict_type_id,
+       where: ,
+       isCrossGroup: 0,
+       crossGroupColumn: ,
+       defaultResult: 1,
+       showType: 2,
+       toolbarWidth: 200,
+       toolbarMinWidth: ,
+       orderby: order by sdt.sort asc,
+       sonTableList:
+         [{index: 1,table: sys_user,aliasName: user,joinType: left,joinCondition: sdt.create_user = user.user_id}],
+       queryList:
+         [
+         {label: 类型名称,id: dictTypeName,column: name,tableName:,type: 1,match: like,order: 1,selectMapKey:,cascadetype:,security:,defaultValue:},
+         {label: 是否系统字典,id: systemFlag,column: system_flag,tableName:,type: 3,match: equal,order: 2,selectMapKey: whether,cascadetype:,security:,defaultValue:},
+         {label: 状态,id: status,column: status,tableName:,type: 3,match: equal,order: 3,selectMapKey: enableStatus,cascadetype:,security:,defaultValue:},
+         {label: 创建时间,id: createTime,column: create_time,tableName:,type: 2,match: date,order: 3,selectMapKey: ,cascadetype:,security:,defaultValue:}
+         ],
+       resultList:
+         [
+         {label: 字典id,column: dict_type_id,tableName: ,aliasName: dictTypeId,isshow: 0,order: 1,security:,resultMapKey:},
+         {label: 类型名称,column: name,tableName:,aliasName: name,isshow: 1,order: 2,security:,resultMapKey:,width:,minWidth: 100,fixed: left,sort: true},
+         {label: 类型编码,column: code,tableName:,aliasName: code,isshow: 1,order: 3,security:,resultMapKey:,width:,minWidth: 170,fixed: left,sort: true},
+         {label: 是否系统字典,column: system_flag,tableName:,aliasName: systemFlag,isshow: 1,order: 4,security:,resultMapKey: whether},
+         {label: 字典描述,column: description,tableName:,aliasName: description,isshow: 1,order: 5,security:,resultMapKey:},
+         {label: 状态,column: status,tableName:,aliasName: status,isshow: 1,order: 6,security: ,resultMapKey: enableStatus,width: 60},
+         {label: 创建时间,column: create_time,tableName:,aliasName: createTime,isshow: 1,order: 7,security:,resultMapKey:,minWidth: 180},
+         {label: 创建人,column: name,tableName: user,aliasName: createUserName,isshow: 1,order: 8,security:,resultMapKey:},
+         {label: 排序,column: sort,tableName:,aliasName: sort,isshow: 1,order: 9,security:,resultMapKey:,width: 60,columnType:, align: center},
+         ],
+       operationList:
+         [
+         {label: 添加类型,id: addDictType,name: addDictType,resultRef: ,resultValue: ,target: ,href: /dictType/add,security:,displayPosition: 0,style:,icon: layui-icon-add-1,paramList:[{name:,resultRef:}]},
+         {label: 修改,id: editDictType,name: editDictType,resultRef: sort,resultValue: 2,target: ,href: /dictType/edit,security:,displayPosition: 1,style:,icon: layui-icon-edit,paramList:[{name: dictTypeId,resultRef: dictTypeId}]},
+         {label: 删除,id: deleteDictType,name: deleteDictType,resultRef:,resultValue:,target: ,href: /dictType/delete,security:,displayPosition: 1,style: layui-btn-danger,icon: layui-icon-delete,paramList:[{name: dictTypeId,resultRef: dictTypeId}]}
+         ],
+       linkList:
+         [
+         {href: /dict,location: name,target: ,paramList:[{name: dictTypeId,resultRef: dictTypeId}]},
+         {href: /dict,location: code,target: ,paramList:[{name: dictTypeId,resultRef: dictTypeId}]}
+         ]
+    },
+    {id: loginLogQuery,name: 登录日志查询,
+     table: sys_login_log,
+     tableAliasName: sll,
+     clazz: cn.stylefeng.guns.sys.modular.system.model.result.LoginLogResult,
+     pk: login_log_id,
+     where: ,
+     isCrossGroup: ,
+     crossGroupColumn: ,
+     defaultResult: 0,
+     showType: 2,
+     orderby: order by sll.create_time desc,
+     sonTableList:
+       [{index: 1,table: sys_user,aliasName: user,joinType: left,joinCondition: sll.user_id = user.user_id}],
+     queryList:
+       [
+       {label: 日志名称,id: logName,column: log_name,tableName:,type: 1,match: like,order: 1,selectMapKey:,cascadetype:,security:,defaultValue:},
+       {label: 时间,id: createTime,column: create_time,tableName:,type: 2,match: date,order: 2,selectMapKey: ,cascadetype:,security:,defaultValue:}
+       ],
+     resultList:
+       [
+       {label: 日志id,column: login_log_id,tableName: ,aliasName: loginLogId,isshow: 0,order: 1,security:,resultMapKey:},
+       {label: 用户名称,column: name,tableName: user,aliasName: userName,isshow: 1,order: 2,security:,resultMapKey:},
+       {label: 创建时间,column: create_time,tableName:,aliasName: createTime,isshow: 1,order: 3,security:,resultMapKey:},
+       {label: 具体消息,column: message,tableName:,aliasName: message,isshow: 1,order: 4,security:,resultMapKey:},
+       {label: ip地址,column: ip_address,tableName:,aliasName: ipAddress,isshow: 1,order: 5,security:,resultMapKey:},
+       {label: 结果,column: succeed,tableName:,aliasName: succeed,isshow: 1,order: 6,security:,resultMapKey:},
+       ],
+     operationList:
+       [
+       {label: 删除,id: editDictType,name: editDictType,resultRef:,resultValue:,target: ,href: /dictType/delete,security:,displayPosition: 1,style: layui-btn-danger,icon: layui-icon-delete,paramList:[{name: dictTypeId,resultRef: dictTypeId}]}
+       ],
+     linkList:
+       []
+    },
+    ]

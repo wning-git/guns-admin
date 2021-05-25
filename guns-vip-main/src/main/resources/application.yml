@@ -1,0 +1,66 @@
+server:
+  port: 80
+  max-http-header-size: 10240
+
+beetl:
+  resource-auto-check: true         #热加载beetl模板，开发时候用
+
+spring:
+  profiles:
+    active: @spring.active@
+  mvc:
+    view:
+      prefix: /pages
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+  jta:
+    atomikos:
+      properties:
+        max-actives: -1
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: 权易汇
+
+mybatis-plus:
+  mapper-locations: classpath*:cn/stylefeng/**/mapping/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: assign_id
+      table-underline: true
+log:
+  path: _app_logs
+springdoc:
+  version: '@springdoc-openapi.version@'
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    tags-sorter: alpha
+  group-configs:
+  - group: dict
+    paths-to-match: /rest/dictType/**,/rest/dict/**
+  - group: user
+    paths-to-match: /rest/mgr/**
+  - group: Actuator
+    paths-to-match: /actuator/**
+    paths-to-exclude: /actuator/health/*
+  show-actuator: true
+management:
+  endpoint:
+    health:
+      show-details: always

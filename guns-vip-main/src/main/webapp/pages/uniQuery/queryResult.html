@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="${bg!}">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>${title!"管理系统"}</title>
+    <link rel="stylesheet" href="${ctxPath}/assets/common/libs/layui/css/layui.css?v=${constants.getReleaseVersion()}"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/common/module/admin.css?v=${constants.getReleaseVersion()}" media="all"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/expand/css/style.css?v=${constants.getReleaseVersion()}" media="all"/>
+
+</head>
+<body>
+<div class="layui-body-header">
+    <span class="layui-body-header-title">${parentTable.name}</span>
+</div>
+
+
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+
+                        <form class="layui-form" action="${ctxPath }/uniQuery/uniQuery" method="post" id="uniqueryForm">
+                            <input type="hidden" name="parent" value="${parentTable.id}">
+                        <div class="layui-form toolbar">
+                            <div class="layui-form-item">
+                                @for(query in parentTable.queryList) {
+                                @switch(query.type) {
+                                @    case 1:
+                                @ if(query.match != "between") {
+                                <div class="layui-col-md4" style="margin-bottom: 15px">
+                                    <label class="layui-form-label">${query.label}</label>
+                                    <div class="layui-input-block">
+                                        <input id="${query.id}" name="${query.id}" placeholder="${query.label}" type="text" class="layui-input" value="${paramValue(query.id)!}"/>
+                                    </div>
+                                </div>
+                                @} else {
+                                <div class="layui-col-md4" style="margin-bottom: 15px">
+                                    <label class="layui-form-label">${query.label}</label>
+                                    <div class="layui-input-block" style="display: flex;">
+                                        <div class="layui-input-inline" style="width: 50%">
+                                            <input id="${query.id}Start" name="${query.id}Start" value="${paramValue(query.id+'Start')!}" class="layui-input" placeholder="最小值" type="text" class="layui-input"/>
+                                        </div>
+                                        <div class="layui-form-mid">-</div>
+                                        <div class="layui-input-inline" style="width: 50%;margin-right: 0px">
+                                            <input id="${query.id}End" name="${query.id}End" value="${paramValue(query.id+'End')!}" class="layui-input" placeholder="最大值" type="text" class="layui-input"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                @}
+                                @       break;
+                                @   case 2:
+                                <div class="layui-col-md4" style="margin-bottom: 15px">
+                                    <label class="layui-form-label">${query.label}</label>
+                                    <div class="layui-input-block" style="display: flex;">
+                                        <div class="layui-input-inline" style="width: 50%">
+                                            <input id="${query.id}Start" name="${query.id}Start" value="${paramValue(query.id+'Start')!}" class="layui-input" placeholder="开始日期" type="text" class="layui-input"/>
+                                        </div>
+                                        <div class="layui-form-mid">-</div>
+                                        <div class="layui-input-inline" style="width: 50%;margin-right: 0px">
+                                            <input id="${query.id}End" name="${query.id}End" value="${paramValue(query.id+'End')!}" class="layui-input" placeholder="结束日期" type="text" class="layui-input" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @       break;
+                                @   case 3:
+                                @       var optionList = selectMap[query.selectMapKey];
+                                <div class="layui-col-md4" style="margin-bottom: 15px">
+                                    <label class="layui-form-label">${query.label}</label>
+                                    <div class="layui-input-block">
+                                        <select id="${query.id}" name="${query.id}" lay-search>
+                                            @ for(option in optionList) {
+                                            @   var selected = "";
+                                            @   if (paramValue(query.id) == option.value) {
+                                            @       selected = "selected='selected'";
+                                            @   }
+                                            <option ${selected!} value="${option.value}">${option.show}</option>
+                                            @}
+                                        </select>
+                                    </div>
+                                </div>
+                                @       break;
+                                @   case 4:
+                                <div class="layui-col-md4" style="margin-bottom: 15px">
+                                    <label class="layui-form-label">${query.label}</label>
+                                    <div class="layui-input-block">
+                                        <input id="${query.id}" name="${query.id}" value="${paramValue(query.id)!}" placeholder="${query.label}" type="text" class="layui-input"/>
+                                    </div>
+                                </div>
+                                @       break;
+                                @   default:
+                                其他
+
+                                @}
+                                @}
+                                <div class="layui-col-md4" style="padding-left: 10px">
+                                    <button id="btnSearch" class="layui-btn icon-btn"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                                    @if (shiro.hasPermission("/uniQuery/exportExcel/"+parentTable.id)) {
+                                    <button id="btnExport" class="layui-btn icon-btn"><i class="layui-icon layui-icon-export"></i>导出</button>
+                                    @}
+
+                                    @for(operation in parentTable.uniOperationList) {
+                                    @   if (shiro.hasPermission(operation.href)) {
+                                    <a id="${operation.id}" name="${operation.name}" target="${operation.target!''}" href="${ctxPath+operation.href}" class="layui-btn icon-btn ${operation.style!}"><i class="layui-icon ${operation.icon!}"></i>${operation.label}</a>
+                                    @   }
+                                    @}
+                                </div>
+                            </div>
+                        </div>
+
+                        </form>
+                        <!--<table class="layui-table" id="uniQueryTable" lay-filter="uniQueryTable">
+                        </table>-->
+                        @ if (isNotEmpty(queryResult)) {
+                        <input type="hidden" name="pageNo" id="pageNo" value="${pageNo }" />
+                        <input type="hidden" name="pageSize" id="pageSize" value="${pageSize }" />
+                        <div class="col-xs-12"  style="overflow-x:auto;">
+                            <table class="layui-table"  id="uniQueryTable" lay-filter="uniQueryTable" lay-data="{limit:${pageSize}}">
+                                <thead>
+                                <tr>
+                                    @for (result in parentTable.resultList) {
+                                    @   var hide = result.isshow==1?'':',hide: true';
+                                    @   var width = isEmpty(result.width)?'':(',width:'+result.width);
+                                    @   var minWidth = isEmpty(result.minWidth)?'':',minWidth:'+result.minWidth;
+                                    @   var fixed = isEmpty(result.fixed)?"":",fixed:'"+result.fixed+"'";
+                                    @   var sort = isEmpty(result.sort)?"":", sort:"+result.sort;
+                                    @   var align = isEmpty(result.align)?", align: 'center'":", align:'"+result.align+"'";
+                                    <th class="layui-table-cell" lay-data="{field:'${result.aliasName}'${width}${minWidth}${fixed}${sort}${align}${hide}}">${result.label}</th>
+
+                                    @}
+                                    @if (!isEmpty(parentTable.detailOperationList)) {
+                                    @   var width = isEmpty(parentTable.toolbarWidth)?'':(',width:'+parentTable.toolbarWidth);
+                                    @   var minWidth = isEmpty(parentTable.toolbarMinWidth)?'':',minWidth:'+parentTable.toolbarMinWidth;
+                                    <th class="layui-table-cell" lay-data="{fixed: 'right',align: 'center', toolbar: '#tableBar'${width}${minWidth}}">操作</th>
+                                    @}
+                                </tr>
+                                </thead>
+                                <tbody class="layui-text">
+                                @for (object in queryResult) {
+                                    <tr>
+                                        @for (result in parentTable.resultList) {
+                                        @   //if(result.isshow == 1) {
+                                        @       var show = "";
+                                        @       var value = reflectUtil.invokeGetMethod(object, result.aliasName);
+                                        @//转换输入下拉（枚举，字典表）
+                                        @       if (isNotEmpty(value)) {
+                                        @           show = value;
+                                        @           if (isNotEmpty(result.resultMapKey)) {
+                                        @               show = resultMap[result.resultMapKey][value];
+                                        @           }
+                                        @
+                                        @       }
+                                        @// 判断是否有超链接
+                                        @       if (isNotEmpty(parentTable.linkMap)) {
+                                        @           var link = parentTable.linkMap[result.aliasName];
+                                        @           if (isNotEmpty(link)) {
+                                        @           var url = printUrl(link, object);
+                                                    <td class="layui-table-cell"><a style="color: #01AAED;" href="${url}" target="${link.target!}">${show}</a></td>
+                                        @           } else {
+                                                    <td class="layui-table-cell">${show}</td>
+                                        @           }
+
+                                        @       } else {
+                                                <td class="layui-table-cell">${show}</td>
+                                        @       }
+                                        @   //}
+                                        @}
+                                        <td class="layui-table-cell">
+
+                                        </td>
+                                    </tr>
+                                @}
+                                </tbody>
+                            </table>
+                            <div id="page"></div>
+                        </div>
+                        @}
+                </div>
+            </div>
+        </div>
+    </div>
+@ if (isNotEmpty(queryResult)) {
+<script type="text/html" id="tableBar">
+    @// 判断是否有超链接
+    @       if (isNotEmpty(parentTable.detailOperationList)) {
+    @           for (operation in parentTable.detailOperationList) {
+    @               if(shiro.hasPermission(operation.href)){
+    @                   var resultRef = operation.resultRef;
+    @                   if (isEmpty(resultRef)) {
+    <a class="layui-btn layui-btn-xs icon-btn ${operation.style!}"  target="${operation.target!''}"  lay-event="${operation.id}" ><i class="layui-icon ${operation.icon!}"></i>${operation.label}</a>
+    @                   } else {
+    {{# if ('${operation.resultValue}'==d.${operation.resultRef}) { }}
+    <a class="layui-btn layui-btn-xs icon-btn ${operation.style!}"  target="${operation.target!''}"  lay-event="${operation.id}" ><i class="layui-icon ${operation.icon!}"></i>${operation.label}</a>
+    {{# } }}
+    @                   }
+    @               }
+    @           }
+    @       }
+</script>
+@}
+
+@/* 加入contextPath属性和session超时的配置 */
+<script type="text/javascript">
+    var Feng = {
+        ctxPath: "${ctxPath}",
+        version: '${constants.getReleaseVersion()}'
+    };
+</script>
+<script type="text/javascript" src="${ctxPath}/assets/common/libs/layui/layui.js?v=${constants.getReleaseVersion()}"></script>
+<script type="text/javascript" src="${ctxPath}/assets/common/js/common.js?v=${constants.getReleaseVersion()}"></script>
+
+<script type="text/javascript">
+    layui.use(['form','table', 'ax', 'func','laydate','laypage'], function () {
+        var $ = layui.$;
+        var table = layui.table;
+        var $ax = layui.ax;
+        var func = layui.func;
+        var laydate = layui.laydate;
+        var laypage = layui.laypage;
+
+        @for(query in parentTable.queryList) {
+        @   if (query.type == 2) {// 日期类型
+                //开始日期
+                var insStart = laydate.render({
+                    elem: '#${query.id}Start'
+                    , done: function (value, date) {
+                        //更新结束日期的最小日期
+                        insEnd.config.min = lay.extend({}, date, {
+                            month: date.month - 1
+                        });
+
+                        //自动弹出结束日期的选择器
+                        insEnd.config.elem[0].focus();
+                    }
+                });
+
+                //结束日期
+                var insEnd = laydate.render({
+                    elem: '#${query.id}End'
+                    , done: function (value, date) {
+                        //更新开始日期的最大日期
+                        insStart.config.max = lay.extend({}, date, {
+                            month: date.month - 1
+                        });
+                    }
+                });
+        @   }
+        @}
+
+        $('#btnSearch').click(function() {
+            $('#uniqueryForm').attr("action","${ctxPath }/uniQuery/uniQuery");
+            $('#uniqueryForm').submit();
+        });
+@ if (isNotEmpty(queryResult)) {
+        $('#btnExport').click(function() {
+            $('#uniqueryForm').attr("action","${ctxPath }/uniQuery/exportExcel/${parentTable.id}");
+            $('#uniqueryForm').submit();
+        });
+        table.on('tool(uniQueryTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+            @if (isNotEmpty(parentTable.detailOperationList)) {
+            @   for (operation in parentTable.detailOperationList) {
+            @       var url = operation.href;
+            @       if(shiro.hasPermission(url)){
+            var url = '${ctxPath}${url}';
+            if (layEvent === '${operation.id}') {// ${operation.label}
+                    @var paramList = operation.paramList;
+                    @for (param in paramList) {
+                       if (url.indexOf("?") == -1) {
+                           url += "?";
+                       } else {
+                           url += "&";
+                       }
+                        url = url + '${param.name}='+data.${param.resultRef};
+                    @}
+                    //alert(url);
+                    @if ('_blank'==operation.target) {
+                    window.open(url);
+                    @} else {
+                    window.location.href=url;
+                    @}
+            }
+            @       }
+            @   }
+            @}
+
+        });
+        var uniqueryForm = $('#uniqueryForm');
+        var queryFormTemp = uniqueryForm.clone();
+
+        queryFormTemp.hide();
+        queryFormTemp.css("display","none");
+        queryFormTemp.removeClass("layui-form");
+        queryFormTemp.attr("id","queryFormTempId");
+        queryFormTemp.appendTo("body");
+
+        laypage.render({
+            elem: 'page' //注意，这里的 test1 是 ID，不用加 # 号
+            ,count: ${count} //数据总数，从服务端得到
+            ,limit: ${pageSize}
+            ,limits: [10,20,30,40,50]
+            ,groups: 5
+            ,curr: ${pageNo}
+            ,prev: '<'
+            ,next: '>'
+            ,layout: ['prev', 'page', 'next','skip','count','limit','refresh']
+            ,jump: function(obj, first){
+                //obj包含了当前分页的所有参数，比如：
+                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                console.log(obj.limit); //得到每页显示的条数
+
+                //首次不执行
+                if(!first){
+                    //do something
+                    //页码
+                    var $pageNo = $("#pageNo").clone();
+                    var $pageSize = $("#pageSize").clone();
+                    $pageNo.attr("id","pageNotemp");
+                    $pageSize.attr("id","pageSizetemp");
+                    var queryFormTemp = $("#queryFormTempId");
+                    queryFormTemp.append($pageNo);
+                    queryFormTemp.append($pageSize);
+                    $("#pageNotemp").val(obj.curr);
+                    $("#pageSizetemp").val(obj.limit);
+                    queryFormTemp.submit();
+                }
+            }
+        });
+@}
+    });
+</script>
+</body>
+</html>
